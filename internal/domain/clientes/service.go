@@ -17,3 +17,7 @@ func NewClientesService(repository Repository) *ClientesService {
 func (s *ClientesService) SaveTransacao(ctx context.Context, id string, t *Transacao) error {
 	return s.repository.SaveTransacao(ctx, id, t)
 }
+
+func (s *ClientesService) GetExtrato(ctx context.Context, id string) (*Extrato, error) {
+	return s.repository.GetExtrato(ctx, id)
+}
