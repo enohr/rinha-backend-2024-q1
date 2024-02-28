@@ -1,10 +1,19 @@
 package clientes
 
-import "github.com/enohr/rinha-backend-2024-q1/internal/infra/database"
+import (
+	"context"
+)
 
 type ClientesService struct {
+	repository Repository
 }
 
-func NewClientesService(repository *database.Repository) *ClientesService {
-	return &ClientesService{}
+func NewClientesService(repository Repository) *ClientesService {
+	return &ClientesService{
+		repository: repository,
+	}
+}
+
+func (s *ClientesService) SaveTransacao(ctx context.Context, id string, t *Transacao) error {
+	return s.repository.SaveTransacao(ctx, id, t)
 }

@@ -14,7 +14,7 @@ func NewAPI(cfg *config.Config) *fiber.App {
 
 	repository := database.NewRepository(cfg.Database)
 	service := clientes.NewClientesService(repository)
-	handlers := clientes.NewClientesHandlers(service)
+	handlers := NewClientesHandlers(service)
 
 	r := NewRouter(app, handlers)
 	r.Start()
