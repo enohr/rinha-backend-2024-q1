@@ -5,11 +5,11 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS transacoes (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     valor INTEGER NOT NULL,
     tipo VARCHAR(1) NOT NULL,
-    descricao VARCHAR(255) NOT NULL,
+    descricao VARCHAR(10) NOT NULL,
     realizada_em TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
