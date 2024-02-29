@@ -3,8 +3,8 @@ package clientes
 import "time"
 
 type Transacao struct {
-	Valor       int
-	Tipo        string
-	Descricao   string
-	RealizadaEm time.Time
+	Valor       int       `json:"valor"`
+	Tipo        string    `json:"tipo"`
+	Descricao   string    `json:"descricao"`
+	RealizadaEm time.Time `json:"realizada_em"`
 }

@@ -3,12 +3,12 @@ package clientes
 import "time"
 
 type Extrato struct {
-	Saldo      Saldo
-	Transacoes []Transacao
+	Saldo      Saldo       `json:"saldo"`
+	Transacoes []Transacao `json:"ultimas_transacoes"`
 }
 
 type Saldo struct {
-	Total        int
-	Data_extrato time.Time
-	Limite       int
+	Total       int       `json:"total"`
+	DataExtrato time.Time `json:"data_extrato"`
+	Limite      int       `json:"limite"`
 }

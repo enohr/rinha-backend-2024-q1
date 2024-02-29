@@ -33,7 +33,10 @@ func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
 func (ch *ClientesHandlers) HandleExtrato(c fiber.Ctx) error {
 	id := c.Params("id")
 
-	ch.service.GetExtrato(c.Context(), id)
+	extrato, err := ch.service.GetExtrato(c.Context(), id)
+	if err != nil {
+		return c.SendString("Error")
+	}
 
-	return c.SendString("Hello from Extrato")
+	return c.JSON(extrato)
 }
