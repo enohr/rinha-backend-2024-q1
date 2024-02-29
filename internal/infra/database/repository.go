@@ -6,11 +6,11 @@ import (
 
 	"github.com/enohr/rinha-backend-2024-q1/internal/domain/clientes"
 	"github.com/enohr/rinha-backend-2024-q1/internal/infra/config"
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Repository struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
 func NewRepository(config config.Database) *Repository {
@@ -31,7 +31,8 @@ func (r *Repository) GetExtrato(ctx context.Context, id string) (*clientes.Extra
 	extrato.Transacoes = make([]clientes.Transacao, 0)
 	extrato.Saldo.DataExtrato = time.Now()
 
-	rows, err := r.db.QueryEx(ctx, extratoQuery, nil, id)
+	rows, err := r.db.Query(ctx, extratoQuery, id)
+
 	if err != nil {
 		return nil, err
 	}
