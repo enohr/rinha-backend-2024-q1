@@ -2,11 +2,15 @@ package clientes
 
 import (
 	"context"
+	"errors"
 )
 
 type ClientesService struct {
 	repository Repository
 }
+
+// TODO: Move to errors
+var ErrLimiteInsuficiente = errors.New("Limite insuficiente")
 
 func NewClientesService(repository Repository) *ClientesService {
 	return &ClientesService{
@@ -14,7 +18,12 @@ func NewClientesService(repository Repository) *ClientesService {
 	}
 }
 
-func (s *ClientesService) SaveTransacao(ctx context.Context, id string, t *Transacao) error {
+func (s *ClientesService) SaveTransacao(ctx context.Context, id string, t *Transacao) (*TransacaoResponse, error) {
+	if t.Tipo == "d" {
+		t.Valor = -t.Valor
+		// TODO: Verify if value exceeds the limit on debit
+	}
+
 	return s.repository.SaveTransacao(ctx, id, t)
 }
 

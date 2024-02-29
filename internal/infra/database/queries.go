@@ -20,3 +20,17 @@ const extratoQuery = `
 		WHERE
 			u.id = $1
 	`
+
+const transacaoQuery = `
+	WITH new_transaction AS (
+		INSERT INTO transacoes (user_id, valor, tipo, descricao)
+		VALUES ($1, $2, $3, $4)
+	),
+	updated_user AS (
+		UPDATE users
+		SET saldo = saldo + $2
+		WHERE id = $1
+		RETURNING saldo, limite
+	)
+	SELECT saldo, limite FROM updated_user;
+	`

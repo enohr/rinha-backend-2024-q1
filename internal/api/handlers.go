@@ -22,12 +22,17 @@ func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
 	}
 
 	id := c.Params("id")
+	// TODO: Verify if the ID exists
 
-	if err := ch.service.SaveTransacao(c.Context(), id, t); err != nil {
-		return c.SendString("Error")
+	transacao, err := ch.service.SaveTransacao(c.Context(), id, t)
+
+	if err != nil {
+		if err == clientes.ErrLimiteInsuficiente {
+			return c.Status(422).SendString("Limite insuficiente")
+		}
 	}
-	return c.SendString("Hello from Transacoes")
 
+	return c.JSON(transacao)
 }
 
 func (ch *ClientesHandlers) HandleExtrato(c fiber.Ctx) error {

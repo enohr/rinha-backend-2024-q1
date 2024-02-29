@@ -4,5 +4,5 @@ import "context"
 
 type Repository interface {
 	GetExtrato(ctx context.Context, id string) (*Extrato, error)
-	SaveTransacao(ctx context.Context, id string, t *Transacao) error
+	SaveTransacao(ctx context.Context, id string, t *Transacao) (*TransacaoResponse, error)
 }
