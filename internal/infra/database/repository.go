@@ -6,6 +6,7 @@ import (
 
 	"github.com/enohr/rinha-backend-2024-q1/internal/domain/clientes"
 	"github.com/enohr/rinha-backend-2024-q1/internal/infra/config"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -23,16 +24,17 @@ func NewRepository(config config.Database) *Repository {
 
 func (r *Repository) SaveTransacao(ctx context.Context, id string, t *clientes.Transacao) (*clientes.Saldo, error) {
 	var saldo clientes.Saldo
-	rows, err := r.db.Query(ctx, transacaoQuery, id, t.Valor, t.Tipo, t.Descricao)
 
-	if err != nil {
-		return nil, err
-	}
+	rows := r.db.QueryRow(ctx, transacaoQuery, id, t.Valor, t.Tipo, t.Descricao)
 
-	for rows.Next() {
-		if err := rows.Scan(&saldo.Total, &saldo.Limite); err != nil {
-			return nil, err
+	if err := rows.Scan(&saldo.Total, &saldo.Limite); err != nil {
+		if pgErr, ok := err.(*pgconn.PgError); ok {
+			// "Constraint check violation"
+			if pgErr.Code == "23514" {
+				return nil, clientes.ErrLimiteInsuficiente
+			}
 		}
+		return nil, err
 	}
 
 	return &saldo, nil
@@ -50,8 +52,8 @@ func (r *Repository) GetExtrato(ctx context.Context, id string) (*clientes.Extra
 		return nil, err
 	}
 
-	// TODO: Check if user exists
 	for rows.Next() {
+		// TODO: Return even if there's no Transactions
 		if err := rows.Scan(&extrato.Saldo.Total, &extrato.Saldo.Limite, &transacao.Valor, &transacao.Tipo, &transacao.Descricao, &transacao.RealizadaEm); err != nil {
 			return nil, err
 		}

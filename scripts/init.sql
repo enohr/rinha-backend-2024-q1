@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     limite INTEGER NOT NULL,
-    saldo INTEGER NOT NULL DEFAULT 0
+    saldo INTEGER NOT NULL DEFAULT 0,
+    CONSTRAINT chk_limite CHECK (-saldo <= limite)
 );
 
 CREATE TABLE IF NOT EXISTS transacoes (
