@@ -16,6 +16,11 @@ func NewClientesHandlers(service *clientes.ClientesService) *ClientesHandlers {
 }
 
 func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
+	type TransacaoResponse struct {
+		Limite int `json:"limite"`
+		Saldo  int `json:"saldo"`
+	}
+
 	t := new(clientes.Transacao)
 	if err := c.Bind().Body(t); err != nil {
 		return err
@@ -24,12 +29,20 @@ func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
 	id := c.Params("id")
 	// TODO: Verify if the ID exists
 
-	transacao, err := ch.service.SaveTransacao(c.Context(), id, t)
+	saldo, err := ch.service.SaveTransacao(c.Context(), id, t)
 
-	if err != nil {
-		if err == clientes.ErrLimiteInsuficiente {
-			return c.Status(422).SendString("Limite insuficiente")
-		}
+	switch err {
+	case clientes.ErrLimiteInsuficiente:
+		return c.Status(422).SendString("Limite insuficiente")
+	default:
+		return c.Status(500).SendString("An error occurred")
+	case nil:
+		break
+	}
+
+	transacao := TransacaoResponse{
+		Limite: saldo.Limite,
+		Saldo:  saldo.Total,
 	}
 
 	return c.JSON(transacao)

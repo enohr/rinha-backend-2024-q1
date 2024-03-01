@@ -18,7 +18,7 @@ func NewClientesService(repository Repository) *ClientesService {
 	}
 }
 
-func (s *ClientesService) SaveTransacao(ctx context.Context, id string, t *Transacao) (*TransacaoResponse, error) {
+func (s *ClientesService) SaveTransacao(ctx context.Context, id string, t *Transacao) (*Saldo, error) {
 	if t.Tipo == "d" {
 		t.Valor = -t.Valor
 		// TODO: Verify if value exceeds the limit on debit

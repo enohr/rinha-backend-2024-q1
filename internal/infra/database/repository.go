@@ -21,8 +21,8 @@ func NewRepository(config config.Database) *Repository {
 	}
 }
 
-func (r *Repository) SaveTransacao(ctx context.Context, id string, t *clientes.Transacao) (*clientes.TransacaoResponse, error) {
-	var transacao clientes.TransacaoResponse
+func (r *Repository) SaveTransacao(ctx context.Context, id string, t *clientes.Transacao) (*clientes.Saldo, error) {
+	var saldo clientes.Saldo
 	rows, err := r.db.Query(ctx, transacaoQuery, id, t.Valor, t.Tipo, t.Descricao)
 
 	if err != nil {
@@ -30,11 +30,12 @@ func (r *Repository) SaveTransacao(ctx context.Context, id string, t *clientes.T
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&transacao.Saldo, &transacao.Limite); err != nil {
+		if err := rows.Scan(&saldo.Total, &saldo.Limite); err != nil {
 			return nil, err
 		}
 	}
-	return &transacao, nil
+
+	return &saldo, nil
 }
 
 func (r *Repository) GetExtrato(ctx context.Context, id string) (*clientes.Extrato, error) {
