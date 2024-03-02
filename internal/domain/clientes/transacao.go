@@ -8,9 +8,3 @@ type Transacao struct {
 	Descricao   string    `json:"descricao"`
 	RealizadaEm time.Time `json:"realizada_em"`
 }
-
-// TODO: Rename to a better name
-type TransacaoResponse struct {
-	Limite int `json:"limite"`
-	Saldo  int `json:"saldo"`
-}
