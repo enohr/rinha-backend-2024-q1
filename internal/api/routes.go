@@ -5,19 +5,21 @@ import (
 )
 
 type Router struct {
-	App      *fiber.App
-	Handlers *ClientesHandlers
+	App         *fiber.App
+	Handlers    *ClientesHandlers
+	Middlewares *ClientesMiddleware
 }
 
-func NewRouter(app *fiber.App, handlers *ClientesHandlers) *Router {
+func NewRouter(app *fiber.App, handlers *ClientesHandlers, middlewares *ClientesMiddleware) *Router {
 	return &Router{
-		App:      app,
-		Handlers: handlers,
+		App:         app,
+		Handlers:    handlers,
+		Middlewares: middlewares,
 	}
 }
 
 func (r *Router) Start() {
-	// TODO: Use Group
-	r.App.Post("/clientes/:id/transacoes", r.Handlers.HandleTransacoes)
-	r.App.Get("/clientes/:id/extrato", r.Handlers.HandleExtrato)
+	group := r.App.Group("clientes/:id", r.Middlewares.ValidateGroup)
+	group.Post("/transacoes", r.Handlers.HandleTransacoes, r.Middlewares.ValidateTransacoes)
+	group.Get("/extrato", r.Handlers.HandleExtrato)
 }

@@ -27,13 +27,12 @@ func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
 	}
 
 	id := c.Params("id")
-	// TODO: Verify if the ID exists
 
 	saldo, err := ch.service.SaveTransacao(c.Context(), id, t)
 
 	switch err {
 	case clientes.ErrLimiteInsuficiente:
-		return c.Status(422).SendString("Limite insuficiente")
+		return c.Status(422).SendString("Insufficient limit")
 	default:
 		return c.Status(500).SendString("An error occurred")
 	case nil:
