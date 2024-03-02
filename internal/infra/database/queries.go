@@ -10,7 +10,7 @@ const extratoQuery = `
 			t.realizada_em
 		FROM
 			users u
-		JOIN LATERAL (
+		LEFT JOIN LATERAL (
 			SELECT *
 			FROM transacoes t 
 			WHERE user_id = u.id

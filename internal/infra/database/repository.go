@@ -53,9 +53,9 @@ func (r *Repository) GetExtrato(ctx context.Context, id string) (*clientes.Extra
 	}
 
 	for rows.Next() {
-		// TODO: Return even if there's no Transactions
 		if err := rows.Scan(&extrato.Saldo.Total, &extrato.Saldo.Limite, &transacao.Valor, &transacao.Tipo, &transacao.Descricao, &transacao.RealizadaEm); err != nil {
-			return nil, err
+			// TODO: Verify the error, if there's no Transactions, will return an error
+			return &extrato, nil
 		}
 		extrato.Transacoes = append(extrato.Transacoes, transacao)
 	}
