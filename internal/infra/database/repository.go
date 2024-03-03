@@ -24,8 +24,12 @@ func NewRepository(config config.Database) *Repository {
 
 func (r *Repository) SaveTransacao(ctx context.Context, id string, t *clientes.Transacao) (*clientes.Saldo, error) {
 	var saldo clientes.Saldo
+	transactionValue := t.Valor
+	if t.Tipo == "d" {
+		transactionValue = -transactionValue
+	}
 
-	rows := r.db.QueryRow(ctx, transacaoQuery, id, t.Valor, t.Tipo, t.Descricao)
+	rows := r.db.QueryRow(ctx, transacaoQuery, id, t.Valor, t.Tipo, t.Descricao, transactionValue)
 
 	if err := rows.Scan(&saldo.Total, &saldo.Limite); err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {

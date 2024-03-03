@@ -15,10 +15,6 @@ func NewClientesService(repository Repository) *ClientesService {
 }
 
 func (s *ClientesService) SaveTransacao(ctx context.Context, id string, t *Transacao) (*Saldo, error) {
-	if t.Tipo == "d" {
-		t.Valor = -t.Valor
-	}
-
 	return s.repository.SaveTransacao(ctx, id, t)
 }
 

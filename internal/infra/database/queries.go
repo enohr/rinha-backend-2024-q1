@@ -28,7 +28,7 @@ const transacaoQuery = `
 	),
 	updated_user AS (
 		UPDATE users
-		SET saldo = saldo + $2
+		SET saldo = saldo + $5
 		WHERE id = $1
 		RETURNING saldo, limite
 	)
