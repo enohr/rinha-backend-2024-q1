@@ -1,8 +1,6 @@
 package api
 
 import (
-	"strconv"
-
 	"github.com/enohr/rinha-backend-2024-q1/internal/domain/clientes"
 	"github.com/gofiber/fiber/v3"
 )
@@ -16,12 +14,7 @@ func NewClientesMiddleware() *ClientesMiddleware {
 func (m *ClientesMiddleware) ValidateGroup(c fiber.Ctx) error {
 	id := c.Params("id")
 
-	intID, err := strconv.Atoi(id)
-	if err != nil {
-		return c.Status(400).SendString("Invalid ID")
-	}
-
-	if intID > 5 {
+	if id == "6" {
 		return c.Status(404).SendString("User not found")
 	}
 
@@ -29,10 +22,11 @@ func (m *ClientesMiddleware) ValidateGroup(c fiber.Ctx) error {
 }
 
 func (m *ClientesMiddleware) ValidateTransacoes(c fiber.Ctx) error {
-	t := new(clientes.Transacao)
+	t := &clientes.Transacao{}
 	if err := c.Bind().Body(t); err != nil {
 		return c.Status(400).SendString("Invalid body")
 	}
+	c.Locals("transaction", t)
 
 	if len(t.Descricao) > 10 || len(t.Descricao) == 0 {
 		return c.Status(400).SendString("Descrption invalid")

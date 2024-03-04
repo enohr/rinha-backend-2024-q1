@@ -21,11 +21,7 @@ func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
 		Saldo  int `json:"saldo"`
 	}
 
-	t := new(clientes.Transacao)
-	if err := c.Bind().Body(t); err != nil {
-		return err
-	}
-
+	t := c.Locals("transaction").(*clientes.Transacao)
 	id := c.Params("id")
 
 	saldo, err := ch.service.SaveTransacao(c.Context(), id, t)
