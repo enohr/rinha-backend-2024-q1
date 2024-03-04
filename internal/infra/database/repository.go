@@ -58,8 +58,13 @@ func (r *Repository) GetExtrato(ctx context.Context, id string) (*clientes.Extra
 
 	for rows.Next() {
 		if err := rows.Scan(&extrato.Saldo.Total, &extrato.Saldo.Limite, &transacao.Valor, &transacao.Tipo, &transacao.Descricao, &transacao.RealizadaEm); err != nil {
-			// TODO: Verify the error, if there's no Transactions, will return an error
-			return &extrato, nil
+			// this is a tricky for performance. this error means the user has no transactions
+			// but we still need to return the info about the user.
+			// Ideally, it should handle the Null values, but for performance, i'll do it this way
+			if err.Error() == "can't scan into dest[2]: cannot scan NULL into *int" {
+				return &extrato, nil
+			}
+			return nil, err
 		}
 		extrato.Transacoes = append(extrato.Transacoes, transacao)
 	}
