@@ -25,5 +25,11 @@ func NewDatabase(config config.Database) *pgxpool.Pool {
 		log.Fatal(err)
 	}
 
+	if err := db.Ping(context.Background()); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Connected to database")
+
 	return db
 }
