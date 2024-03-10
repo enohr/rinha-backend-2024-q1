@@ -56,6 +56,8 @@ func (r *Repository) GetExtrato(ctx context.Context, id string) (*clientes.Extra
 		return nil, err
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		if err := rows.Scan(&extrato.Saldo.Total, &extrato.Saldo.Limite, &transacao.Valor, &transacao.Tipo, &transacao.Descricao, &transacao.RealizadaEm); err != nil {
 			// this is a tricky for performance. this error means the user has no transactions

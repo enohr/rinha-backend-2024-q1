@@ -11,7 +11,7 @@ import (
 
 func NewDatabase(config config.Database) *pgxpool.Pool {
 	dbUrl := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s",
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		config.User,
 		config.Password,
 		config.Host,
@@ -19,7 +19,9 @@ func NewDatabase(config config.Database) *pgxpool.Pool {
 		config.Db,
 	)
 
-	db, err := pgxpool.New(context.Background(), dbUrl)
+	cfg, err := pgxpool.ParseConfig(dbUrl)
+
+	db, err := pgxpool.NewWithConfig(context.Background(), cfg)
 
 	if err != nil {
 		log.Fatal(err)
