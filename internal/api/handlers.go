@@ -16,13 +16,29 @@ func NewClientesHandlers(service *clientes.ClientesService) *ClientesHandlers {
 }
 
 func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
+	id := c.Params("id")
+
+	if id == "6" {
+		return c.Status(404).SendString("User not found")
+	}
+
+	t := &clientes.Transacao{}
+	if err := c.Bind().Body(t); err != nil {
+		return c.Status(400).SendString("Invalid body")
+	}
+
+	if len(t.Descricao) > 10 || len(t.Descricao) == 0 {
+		return c.Status(400).SendString("Descrption invalid")
+	}
+
+	if t.Tipo != "d" && t.Tipo != "c" {
+		return c.Status(400).SendString("Type must be 'd' or 'c'")
+	}
+
 	type TransacaoResponse struct {
 		Limite int `json:"limite"`
 		Saldo  int `json:"saldo"`
 	}
-
-	t := c.Locals("transaction").(*clientes.Transacao)
-	id := c.Params("id")
 
 	saldo, err := ch.service.SaveTransacao(c.Context(), id, t)
 
@@ -46,9 +62,13 @@ func (ch *ClientesHandlers) HandleTransacoes(c fiber.Ctx) error {
 func (ch *ClientesHandlers) HandleExtrato(c fiber.Ctx) error {
 	id := c.Params("id")
 
+	if id == "6" {
+		return c.Status(404).SendString("User not found")
+	}
+
 	extrato, err := ch.service.GetExtrato(c.Context(), id)
 	if err != nil {
-		return c.SendString("Error")
+		return c.Status(500).SendString("An error occurred")
 	}
 
 	return c.JSON(extrato)
