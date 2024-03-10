@@ -22,7 +22,9 @@ services:
       resources:
         limits:
           cpus: "0.20"
-          memory: "100MB"
+          memory: "25MB"
+    volumes:
+      - shared:/var/lib/postgresql
 
   api2:
     <<: *api
@@ -41,7 +43,7 @@ services:
       resources:
         limits:
           cpus: "0.25"
-          memory: "50MB"
+          memory: "150MB"
 
   db: 
     image: postgres
@@ -53,7 +55,10 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: rinha
     volumes:
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/script.sql
+      - shared:/var/lib/postgresql/data
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./scripts/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: 'postgres -c config_file=/etc/postgresql/postgresql.conf'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -63,7 +68,10 @@ services:
       resources:
         limits:
           cpus: "0.85"
-          memory: "250MB"
+          memory: "350MB"
+
+volumes:
+  shared:
 
 networks:
   default:

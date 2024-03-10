@@ -1,8 +1,9 @@
 version: "3.9"
 
 services:
-  db:
+  db: 
     image: postgres
+    hostname: db
     ports:
       - "5432:5432"
     environment:
@@ -10,4 +11,11 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: rinha
     volumes:
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/script.sql
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./scripts/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: 'postgres -c config_file=/etc/postgresql/postgresql.conf'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
