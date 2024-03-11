@@ -21,6 +21,9 @@ func NewDatabase(config config.Database) *pgxpool.Pool {
 
 	cfg, err := pgxpool.ParseConfig(dbUrl)
 
+	cfg.MaxConns = 4
+	cfg.MinConns = 2
+
 	db, err := pgxpool.NewWithConfig(context.Background(), cfg)
 
 	if err != nil {
@@ -31,7 +34,7 @@ func NewDatabase(config config.Database) *pgxpool.Pool {
 		log.Fatal(err)
 	}
 
-	log.Println("Connected to database")
+	log.Println("Database finished")
 
 	return db
 }

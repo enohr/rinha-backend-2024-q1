@@ -13,6 +13,7 @@ services:
       DB_PASSWORD: password
       DB_NAME: rinha
       API_PORT: 8080
+      FIBER_ENV: production
     expose:
       - 8080
     depends_on:
@@ -42,8 +43,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.25"
-          memory: "150MB"
+          cpus: "0.30"
+          memory: "200MB"
 
   db: 
     image: postgres
@@ -67,8 +68,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.85"
-          memory: "350MB"
+          cpus: "0.80"
+          memory: "300MB"
 
 volumes:
   shared:
